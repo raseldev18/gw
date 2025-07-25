@@ -173,7 +173,7 @@ async function bratVidGenerator(text, width, height, bgColor = "#FFFFFF", textCo
     }
     let sizeFound = false;
     while (fontSize > 10) {
-      tempCtx.font = `bold ${fontSize}px Sans-serif`;
+      tempCtx.font = `normal ${fontSize}px Sans-serif`;
       const segments = parseTextToSegments(text, tempCtx, fontSize);
       const lines = rebuildLinesFromSegments(segments, availableWidth);
       let isTooWide = false;
