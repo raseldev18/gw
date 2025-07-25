@@ -2,7 +2,6 @@ const { createCanvas, loadImage } = require('canvas');
 const fs = require("fs");
 const path = require("path");
 const EmojiDbLib = require("emoji-db");
-const Jimp = require('jimp');
 const ffmpeg = require('fluent-ffmpeg');
 
 let emojiDb;
@@ -425,20 +424,10 @@ async function bratGenerator(teks, highlightWords = []) {
       }
       y += lineHeight;
     }
-    let buffer;
     try {
-      buffer = canvas.toBuffer("image/png");
+      return canvas.toBuffer("image/png");
     } catch (error) {
       console.error('Error converting canvas to buffer:', error);
-      throw error;
-    }
-    try {
-      image = await Jimp.read(buffer);
-      image.blur(2);
-      const blurredBuffer = await image.getBufferAsync(Jimp.MIME_PNG);
-      return blurredBuffer;
-    } catch (error) {
-      console.error('Error processing image with Jimp:', error);
       throw error;
     }
   } catch (error) {
