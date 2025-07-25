@@ -172,20 +172,30 @@ async function bratVidGenerator(text, width, height, bgColor = "#FFFFFF", textCo
     if (!tempCtx) {
       throw new Error('Failed to create canvas context');
     }
+    let sizeFound = false;
     while (fontSize > 10) {
       tempCtx.font = `bold ${fontSize}px Arial`;
       const segments = parseTextToSegments(text, tempCtx, fontSize);
       const lines = rebuildLinesFromSegments(segments, availableWidth);
+      let isTooWide = false;
+      for (const line of lines) {
+        const lineWidth = line.reduce((sum, seg) => sum + seg.width, 0);
+        if (lineWidth > availableWidth) {
+          isTooWide = true;
+          break;
+        }
+      }
       const currentLineHeight = fontSize * 1.2;
       const totalTextHeight = lines.length * currentLineHeight;
-      if (totalTextHeight <= height - (padding * 2)) {
+      if (totalTextHeight <= height - (padding * 2) && !isTooWide) {
         finalLines = lines;
         lineHeight = currentLineHeight;
+        sizeFound = true;
         break;
       }
       fontSize -= 5;
     }
-    if (fontSize <= 10) {
+    if (!sizeFound) {
       throw new Error('Text is too large for the specified dimensions');
     }
     let frames = [];
@@ -281,8 +291,8 @@ async function drawSegment(ctx, segment, x, y, fontSize, lineHeight, textColor, 
         ctx.fillStyle = '#EEEEEE';
         ctx.fillRect(x, y, fontSize, fontSize);
         ctx.fillStyle = textColor;
-        ctx.font = `${fontSize/3}px Arial`;
-        ctx.fillText('?', x + fontSize/3, y + fontSize/2);
+        ctx.font = `${fontSize / 3}px Arial`;
+        ctx.fillText('?', x + fontSize / 3, y + fontSize / 2);
       }
     }
   } catch (error) {
@@ -324,9 +334,17 @@ async function bratGenerator(teks, highlightWords = []) {
       ctx.font = `bold ${fontSize}px Sans-serif`;
       const segments = parseTextToSegments(teks, ctx, fontSize);
       const lines = rebuildLinesFromSegments(segments, availableWidth);
+      let isTooWide = false;
+      for (const line of lines) {
+        const lineWidth = line.reduce((sum, seg) => sum + seg.width, 0);
+        if (lineWidth > availableWidth) {
+          isTooWide = true;
+          break;
+        }
+      }
       const currentLineHeight = fontSize * lineHeightMultiplier;
       const totalTextHeight = lines.length * currentLineHeight;
-      if (totalTextHeight <= height - 2 * verticalPadding) {
+      if (totalTextHeight <= height - 2 * verticalPadding && !isTooWide) {
         finalLines = lines;
         finalFontSize = fontSize;
         lineHeight = currentLineHeight;
@@ -334,7 +352,7 @@ async function bratGenerator(teks, highlightWords = []) {
       }
       fontSize -= 2;
     }
-    if (fontSize <= 10) {
+    if (finalFontSize === 0) {
       throw new Error('Text is too large for the specified dimensions');
     }
     const randomWarna = ["blue", "green", "orange", "purple", "red"];
@@ -364,8 +382,8 @@ async function bratGenerator(teks, highlightWords = []) {
               ctx.fillStyle = '#EEEEEE';
               ctx.fillRect(x, y, emojiSize, emojiSize);
               ctx.fillStyle = "black";
-              ctx.font = `${finalFontSize/3}px Sans-serif`;
-              ctx.fillText('?', x + emojiSize/3, y + emojiSize/2);
+              ctx.font = `${finalFontSize / 3}px Sans-serif`;
+              ctx.fillText('?', x + emojiSize / 3, y + emojiSize / 2);
             }
           }
           x += segment.width;
@@ -395,8 +413,8 @@ async function bratGenerator(teks, highlightWords = []) {
               ctx.fillStyle = '#EEEEEE';
               ctx.fillRect(currentX, y, emojiSize, emojiSize);
               ctx.fillStyle = "black";
-              ctx.font = `${finalFontSize/3}px Sans-serif`;
-              ctx.fillText('?', currentX + emojiSize/3, y + emojiSize/2);
+              ctx.font = `${finalFontSize / 3}px Sans-serif`;
+              ctx.fillText('?', currentX + emojiSize / 3, y + emojiSize / 2);
             }
           }
           currentX += segment.width;
