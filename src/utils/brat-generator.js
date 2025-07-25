@@ -163,7 +163,7 @@ async function bratVidGenerator(text, width, height, bgColor = "#FFFFFF", textCo
     const emojiCache = await emojiImageCachePromise;
     const padding = 20;
     const availableWidth = width - (padding * 2);
-    let fontSize = 50;
+    let fontSize = 100;
     let finalLines = [];
     let lineHeight = 0;
     const tempCanvas = createCanvas(1, 1);
@@ -173,7 +173,7 @@ async function bratVidGenerator(text, width, height, bgColor = "#FFFFFF", textCo
     }
     let sizeFound = false;
     while (fontSize > 10) {
-      tempCtx.font = `bold ${fontSize}px Arial`;
+      tempCtx.font = `bold ${fontSize}px Sans-serif`;
       const segments = parseTextToSegments(text, tempCtx, fontSize);
       const lines = rebuildLinesFromSegments(segments, availableWidth);
       let isTooWide = false;
