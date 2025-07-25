@@ -207,7 +207,7 @@ async function bratVidGenerator(text, width, height, bgColor = "#FFFFFF", textCo
       }
       ctx.fillStyle = bgColor;
       ctx.fillRect(0, 0, width, height);
-      ctx.font = `bold ${fontSize}px Arial`;
+      ctx.font = `normal ${fontSize}px Sans-serif`;
       ctx.textBaseline = 'top';
       const totalTextBlockHeight = finalLines.length * lineHeight;
       const startY = (height - totalTextBlockHeight) / 2;
